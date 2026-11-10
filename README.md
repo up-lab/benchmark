@@ -44,14 +44,14 @@ therefore estimates `$0.0375` or `$0.06` of machine time. These are
 informational estimates, not an observed charge or a hard billing cutoff. The
 actual CPU fingerprint from the job is required before interpreting any result.
 
-## Run only after a future budget GO
+## Run only with confirmed budget headroom
 
-Do not dispatch today. The owner's external allocation is currently held by one
+As of 2026-11-10, do not dispatch while the recorded holds exhaust the allocation. The owner's external allocation is currently held by one
 Depot and one Boat refusal, the charge is unknown, and there is no extra
-headroom until accounting is reconciled or the UTC day rolls over. A future
-explicit budget GO is required first.
+headroom until accounting is reconciled or the UTC day rolls over. Confirmed external headroom is required before dispatch under the standing
+owner authorization.
 
-After that GO, and after this change is merged to the fork's `main`, the single
+After headroom is confirmed, and after this change is merged to the fork's `main`, the single
 intended command is:
 
 ```sh
@@ -97,9 +97,8 @@ The workflow starts only from `workflow_dispatch` or the schedule. It has no
 `pull_request` trigger, no secrets in benchmark jobs, no caches and no
 third-party actions. Benchmark jobs use `permissions: {}`. Only the
 GitHub-hosted `collect` job can write, only on the default branch, and only to
-the `results` branch. The router refuses to place jobs that did not come from a
-manual or scheduled run on the default branch, so a fork pull request cannot
-start paid compute.
+the `results` branch. There is no pull-request trigger. Native provider jobs do not pass through
+the CI Router admission path; this is an external provider benchmark.
 
 ## Licence
 
