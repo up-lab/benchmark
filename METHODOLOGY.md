@@ -3,8 +3,9 @@
 Suite version: see `suite.json`. Scores are only compared within one suite
 version. A change to any pin, toolchain or script makes a new one.
 
-Status: GitHub baseline collection plus a bounded native Depot 2-vCPU pilot.
-Two workloads are available; each paid pilot dispatch selects exactly one.
+Status: fork preparation for one bounded native Ubicloud 4-vCPU sample at the
+GitHub-hosted baseline shape. No fork measurement exists yet. Two workloads are
+available; a paid dispatch selects exactly one.
 
 ## Why this exists
 
@@ -141,29 +142,29 @@ A route is one way of getting a runner:
   are compared at 4 vCPUs. Smaller and larger sizes are published as raw numbers
   and are not scored.
 - **Providers with their own GitHub Actions integration**, using their own
-  labels. This measures what a customer gets from that provider directly. The
-  bounded Depot and Boat small pilots are the currently enabled native integrations. `ubicloud-hosted-4vcpu` (label `ubicloud-standard-4-ubuntu-2404`) is
-  declared in `routes.json` with `"enabled": false`: it is Ubicloud's own hosted
-  runner, and it stays out of the dispatch matrix until the Ubicloud GitHub App
-  is installed on the organization. Its `settings` object (`premiumCpu`,
-  `transparentCache`) is where those two Ubicloud options are recorded before
-  the route is enabled; `null` means not recorded. Both may change speed, so a
-  result must be read together with them.
-  `depot-ubuntu-2vcpu` (label `depot-ubuntu-24.04`, 2 vCPU, 8 GB) is Depot's
-  own hosted runner. Its App was installed on 2026-11-08; the 2026-11-10
-  pilot enables only this size with one explicit workload and repetition. At 2 vCPUs it is published as raw numbers and not scored, and its
-  job logs are not archived (`archiveLogs` is only set on the GitHub-hosted
-  baseline). A dispatch selects it with `route=depot-ubuntu-2vcpu` and an explicit `workload`.
-  `boat-4vcpu` (label `boat`, 4 vCPU, 8 GB) and `boat-2vcpu` (label
-  `boat-small`, 2 vCPU, 4 GB) are prepared Boat CI runner routes. The Boat
-  GitHub App was installed on 2026-11-08. Only `boat-2vcpu` is enabled for one
-  explicit Node workload/repetition; `boat-4vcpu` remains disabled. The normal
-  job diagnoses current repository/account/plan/public-job admission; App
-  installation alone does not prove access. No subscription purchase is authorized. Boat runs each job in a fresh sandbox
-  on shared vCPUs and does not promise a CPU model, so the CPU model each job
-  reports matters more than usual when reading its numbers. `boat-4vcpu` is at
-  the reference size; `boat-2vcpu` is published as raw numbers and not scored.
-  Neither archives job logs.
+  labels. This measures what a customer gets from that provider directly. In
+  this fork the only enabled native integration is `ubicloud-hosted-4vcpu`
+  (label `ubicloud-standard-4-ubuntu-2404`, 4 vCPU, 16 GB, image
+  `ubuntu-24.04`). It is Ubicloud's own hosted runner, started through the
+  Ubicloud GitHub App. The label and image match the GitHub-hosted baseline OS
+  and size; Ubicloud documents Ubuntu 24.04 and 26.04 runner images. The App is
+  installed for all repositories and unsuspended, and the fork has admin push,
+  but that does not prove first-job admission: the normal job is the admission
+  test. Its `settings` object (`premiumCpu`, `transparentCache`) remains `null`
+  (unknown) until recorded from the account or job; do not force account
+  settings. Both may change speed, so a result must be read together with them.
+  Ubicloud's published standard 4-vCPU rate is `$0.0025/minute` and premium is
+  `$0.004/minute`; 15 minutes estimates `$0.0375` or `$0.06` of machine time.
+  These are informational estimates, not an observed charge or a hard billing
+  cutoff. The actual CPU fingerprint is required before interpreting results.
+  The route does not archive job logs.
+  `depot-ubuntu-2vcpu` (label `depot-ubuntu-24.04`, 2 vCPU, 8 GB) and
+  `boat-2vcpu` (label `boat-small`, 2 vCPU, 4 GB) are declared but disabled in
+  this fork to prevent accidental cross-organization access or inference. The
+  upstream `ci-router/benchmark` Depot and Boat pilots and their historical runs
+  are not fork measurements. `depot-ubuntu-4vcpu`, `boat-4vcpu` and
+  `tenki-hosted-4vcpu` also remain disabled. No subscription or plan purchase is
+  authorized, and no ruleset bypass is used.
 - **Router routes.** These come later. A router route can only be started from a
   manual or scheduled run on the default branch: the router refuses to place
   jobs from anything else, including a pull request from a fork. Not in stage 1.
@@ -247,6 +248,10 @@ run under. Results are scored per version and never mixed.
 
 ## Baselines
 
+The baselines below describe the upstream `ci-router/benchmark` program and its
+historical measurements. This fork has no measurements yet, so none of these
+baselines is a fork result.
+
 - **Public, measured:** the 4-vCPU standard runner. Free, so it has a time but no
   meaningful cost.
 - **Private, measured:** the 2-vCPU standard runner most paying customers use,
@@ -303,7 +308,8 @@ cell whose coefficient of variation is above 15% is flagged as unstable.
 
 - Only `workflow_dispatch` and the schedule start the workflow. It
   has no `pull_request` trigger, so a fork's pull request cannot add its own run.
-- The default branch is protected: no direct pushes, changes need a review.
+- This candidate uses an ordinary pull request and independent source review;
+  repository branch-protection settings are not established by this document.
 - Benchmark jobs have no secrets and `permissions: {}`. Only the GitHub-hosted
   `collect` job (and the manual `archive` workflow, which checks the run it is
   given) can write, only on the default branch, and only to the `results`
@@ -335,21 +341,26 @@ cell whose coefficient of variation is above 15% is flagged as unstable.
 
 ## Stages
 
-1. **Baseline:** GitHub-hosted measurements established the two-workload harness
-   and recorded repeated-run variation.
-2. **Native provider pilots (current):** Depot and Boat 2-vCPU pilots are enabled
-   for explicit one-workload, one-repeat jobs. Other native routes remain disabled.
+1. **Upstream baseline:** historical `ci-router/benchmark` GitHub-hosted
+   measurements established the harness and repeated-run variation. They are
+   not `up-lab/benchmark` measurements.
+2. **Native provider pilot (current fork preparation):** one Ubicloud 4-vCPU
+   route is enabled for an explicit one-workload, one-repeat job once external
+   headroom is confirmed under standing owner authorization. Depot, Boat, Tenki and other native routes remain disabled in this
+   fork. No fork measurement exists yet.
 3. Router routes, once the router's checks for these runs are in place.
 4. The full suite, a schedule and a results page, after each provider's terms
    are checked for restrictions on publishing benchmarks.
 
 ## Recurring samples
 
-The free public GitHub baseline is sampled every six hours, at 00:23, 06:23,
-12:23 and 18:23 UTC. GitHub may delay or skip scheduled workflows, and the
+The upstream `ci-router/benchmark` free public GitHub baseline has six-hour
+sampling targets at 00:23, 06:23, 12:23 and 18:23 UTC. This fork does not run
+that schedule. GitHub may delay or skip scheduled workflows, and the
 workflow's global concurrency group can drop a pending pass when a newer one
 queues; these times are sampling targets, not availability guarantees. The
-schedule is enabled for this public repository on `main`; forks do not run it.
+schedule is enabled only for the upstream repository on `main`; this fork
+skips scheduled planning.
 Manual dispatch remains available.
 
 `schedule.json` is an explicit external-program enrollment: `program` is
@@ -363,16 +374,20 @@ label, image or size fail closed until reviewed. The baseline is pinned to
 `ubuntu-24.04`, 4 vCPUs and 16 GB; paid routes are rejected by the schedule entirely.
 
 The owner-approved operational allocation is $10/day combined ($2 external /
-$8 internal). This external schedule reserves $0/day. The $1 Depot allocation
-remains retained and the remaining $1 external headroom is reserved for one Boat
-small pilot. Together these consume the $2 external allocation; they are
-operational holds, not refunds or actual invoices. No paid schedule and no
-paid retry are authorized by this change. Scheduled reruns are skipped; a
-replacement sample needs a fresh explicit allocation and is not automatic.
+$8 internal). This external schedule reserves $0/day. In this fork the external
+allocation is currently held by one Depot and one Boat refusal, and the charge
+is unknown; there is no extra headroom until accounting is reconciled or the UTC
+day rolls over. Confirmed external headroom is required before the Ubicloud
+route is dispatched under standing owner authorization. These are operational holds, not refunds or actual
+invoices. No paid schedule and no paid retry are authorized by this change.
+Scheduled reruns are skipped; a replacement sample needs a fresh explicit
+allocation and is not automatic. The existing cron is guarded to the upstream
+`ci-router/benchmark` repository on `main`, so a fork scheduled plan is skipped;
+this fork adds no paid cron.
 
 The workflow runs at most one matrix job at a time with a 15-minute timeout and
 serializes benchmark workflows without cancelling running samples. It keeps the
-existing immutable raw results and collector. At four successful passes per day
+existing immutable raw results and collector. For upstream recurring sampling, four successful passes per day mean
 a workload reaches 20 samples in five days and 40 in ten; missing, skipped and
 failed runs can extend that. Existing scoring thresholds still apply. Scheduling
 does not establish comparative performance, adequate coverage or routing
