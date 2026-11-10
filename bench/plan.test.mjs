@@ -44,14 +44,20 @@ test('readRoutes tolerates the archiveLogs field', () => {
   assert.ok(routes.every((r) => !('archiveLogs' in r)), 'the matrix does not carry archive settings');
 });
 
-test('the Ubicloud hosted runner is declared but disabled, and stays out of the matrix', () => {
+test('the Ubicloud hosted runner is enabled at the reviewed baseline shape', () => {
   const routes = readRoutes(join(root, 'routes.json'));
   const ubicloud = routes.find((r) => r.id === 'ubicloud-hosted-4vcpu');
   assert.ok(ubicloud);
   assert.equal(ubicloud.runsOn, 'ubicloud-standard-4-ubuntu-2404');
-  assert.equal(ubicloud.enabled, false);
+  assert.equal(ubicloud.image, 'ubuntu-24.04');
+  assert.equal(ubicloud.vcpu, 4);
+  assert.equal(ubicloud.memoryGb, 16);
+  assert.equal(ubicloud.enabled, true);
+  const raw = JSON.parse(readFileSync(join(root, 'routes.json'), 'utf8')).routes.find((r) => r.id === 'ubicloud-hosted-4vcpu');
+  assert.deepEqual(raw.settings, { premiumCpu: null, transparentCache: null });
+  assert.deepEqual(selectRoutes(routes, 'ubicloud-hosted-4vcpu').map((r) => r.id), ['ubicloud-hosted-4vcpu']);
   const m = buildMatrix(routes, ['w1'], 1);
-  assert.ok(m.include.every((j) => j.route.id !== 'ubicloud-hosted-4vcpu'));
+  assert.ok(m.include.some((j) => j.route.id === 'ubicloud-hosted-4vcpu'));
 });
 
 test('selectRoutes: default is only the free baseline; explicit selection cannot fan out', () => {
@@ -68,14 +74,15 @@ test('selectRoutes: default is only the free baseline; explicit selection cannot
   for (const bad of ['A', 'a b', '$(id)', 'a;b', '-a']) assert.throws(() => selectRoutes(routes, bad), /route id/, bad);
 });
 
-test('the Depot route is declared with its own label and 2 vCPU / 8 GB', () => {
+test('the Depot route is declared with its own label and 2 vCPU / 8 GB, but disabled in the fork', () => {
   const routes = readRoutes(join(root, 'routes.json'));
   const depot = routes.find((r) => r.id === 'depot-ubuntu-2vcpu');
   assert.ok(depot);
   assert.equal(depot.runsOn, 'depot-ubuntu-24.04');
   assert.equal(depot.vcpu, 2);
   assert.equal(depot.memoryGb, 8);
-  assert.equal(selectRoutes(routes, 'depot-ubuntu-2vcpu')[0].id, depot.id);
+  assert.equal(depot.enabled, false);
+  assert.throws(() => selectRoutes(routes, 'depot-ubuntu-2vcpu'), /disabled/);
 });
 
 test('the Boat routes are declared with their own labels and sizes', () => {
@@ -90,9 +97,9 @@ test('the Boat routes are declared with their own labels and sizes', () => {
   assert.ok(!four.archiveLogs && !two.archiveLogs);
 });
 
-test('unqualified hosted routes remain disabled, including the documented Tenki configuration', () => {
+test('the fork enables exactly GitHub and Ubicloud; other hosted routes remain disabled', () => {
   const routes = readRoutes(join(root, 'routes.json'));
-  assert.deepEqual(routes.filter((r) => r.enabled).map((r) => r.id), ['github-hosted-4vcpu', 'depot-ubuntu-2vcpu', 'boat-2vcpu']);
+  assert.deepEqual(routes.filter((r) => r.enabled).map((r) => r.id), ['github-hosted-4vcpu', 'ubicloud-hosted-4vcpu']);
   const tenki = routes.find((r) => r.id === 'tenki-hosted-4vcpu');
   assert.equal(tenki.runsOn, 'tenki-standard-medium-4c-8g');
   assert.equal(tenki.vcpu, 4);
