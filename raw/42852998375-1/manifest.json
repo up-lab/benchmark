@@ -1,0 +1,15 @@
+{
+  "repo": "up-lab/benchmark",
+  "runId": 42852998375,
+  "attempt": 1,
+  "headSha": "dc812fc4e7b426a31c819279c3a685a8fa1ebe11",
+  "jobs": [
+    {
+      "jobId": 129958535414,
+      "name": "run ubicloud-hosted-4vcpu rust-analyzer 1",
+      "route": "ubicloud-hosted-4vcpu",
+      "archived": false,
+      "reason": "route-not-enabled"
+    }
+  ]
+}
