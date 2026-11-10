@@ -308,7 +308,8 @@ cell whose coefficient of variation is above 15% is flagged as unstable.
 
 - Only `workflow_dispatch` and the schedule start the workflow. It
   has no `pull_request` trigger, so a fork's pull request cannot add its own run.
-- The default branch is protected: no direct pushes, changes need a review.
+- This candidate uses an ordinary pull request and independent source review;
+  repository branch-protection settings are not established by this document.
 - Benchmark jobs have no secrets and `permissions: {}`. Only the GitHub-hosted
   `collect` job (and the manual `archive` workflow, which checks the run it is
   given) can write, only on the default branch, and only to the `results`
@@ -340,11 +341,12 @@ cell whose coefficient of variation is above 15% is flagged as unstable.
 
 ## Stages
 
-1. **Baseline:** GitHub-hosted measurements established the two-workload harness
-   and recorded repeated-run variation.
+1. **Upstream baseline:** historical `ci-router/benchmark` GitHub-hosted
+   measurements established the harness and repeated-run variation. They are
+   not `up-lab/benchmark` measurements.
 2. **Native provider pilot (current fork preparation):** one Ubicloud 4-vCPU
-   route is enabled for an explicit one-workload, one-repeat job after a future
-   budget GO. Depot, Boat, Tenki and other native routes remain disabled in this
+   route is enabled for an explicit one-workload, one-repeat job once external
+   headroom is confirmed under standing owner authorization. Depot, Boat, Tenki and other native routes remain disabled in this
    fork. No fork measurement exists yet.
 3. Router routes, once the router's checks for these runs are in place.
 4. The full suite, a schedule and a results page, after each provider's terms
@@ -352,11 +354,13 @@ cell whose coefficient of variation is above 15% is flagged as unstable.
 
 ## Recurring samples
 
-The free public GitHub baseline is sampled every six hours, at 00:23, 06:23,
-12:23 and 18:23 UTC. GitHub may delay or skip scheduled workflows, and the
+The upstream `ci-router/benchmark` free public GitHub baseline has six-hour
+sampling targets at 00:23, 06:23, 12:23 and 18:23 UTC. This fork does not run
+that schedule. GitHub may delay or skip scheduled workflows, and the
 workflow's global concurrency group can drop a pending pass when a newer one
 queues; these times are sampling targets, not availability guarantees. The
-schedule is enabled for this public repository on `main`; forks do not run it.
+schedule is enabled only for the upstream repository on `main`; this fork
+skips scheduled planning.
 Manual dispatch remains available.
 
 `schedule.json` is an explicit external-program enrollment: `program` is
@@ -373,8 +377,8 @@ The owner-approved operational allocation is $10/day combined ($2 external /
 $8 internal). This external schedule reserves $0/day. In this fork the external
 allocation is currently held by one Depot and one Boat refusal, and the charge
 is unknown; there is no extra headroom until accounting is reconciled or the UTC
-day rolls over. A future explicit budget GO is required before the Ubicloud
-route is dispatched. These are operational holds, not refunds or actual
+day rolls over. Confirmed external headroom is required before the Ubicloud
+route is dispatched under standing owner authorization. These are operational holds, not refunds or actual
 invoices. No paid schedule and no paid retry are authorized by this change.
 Scheduled reruns are skipped; a replacement sample needs a fresh explicit
 allocation and is not automatic. The existing cron is guarded to the upstream
@@ -383,7 +387,7 @@ this fork adds no paid cron.
 
 The workflow runs at most one matrix job at a time with a 15-minute timeout and
 serializes benchmark workflows without cancelling running samples. It keeps the
-existing immutable raw results and collector. At four successful passes per day
+existing immutable raw results and collector. For upstream recurring sampling, four successful passes per day mean
 a workload reaches 20 samples in five days and 40 in ten; missing, skipped and
 failed runs can extend that. Existing scoring thresholds still apply. Scheduling
 does not establish comparative performance, adequate coverage or routing
