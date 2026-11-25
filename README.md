@@ -27,7 +27,7 @@ prepare one bounded, native Ubicloud GitHub Actions runner sample at the same
 | `github-hosted-4vcpu` | `ubuntu-24.04` | 4 vCPU / 16 GB | Ubuntu 24.04 | enabled, free baseline |
 | `ubicloud-hosted-4vcpu` | `ubicloud-standard-4-ubuntu-2404` | 4 vCPU / 16 GB | Ubuntu 24.04 | enabled, paid, not yet run |
 
-Depot, Boat, Tenki and every other route are disabled in this fork to prevent
+Depot, Boat, Luxor and every other route are disabled in this fork to prevent
 accidental cross-organization access or inference. The upstream Depot and Boat
 pilots and their historical runs are not fork measurements.
 

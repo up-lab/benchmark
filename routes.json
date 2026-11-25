@@ -70,9 +70,10 @@
       "note": "Disabled in the up-lab/benchmark fork to prevent accidental cross-organization access or inference. The upstream ci-router/benchmark Boat pilot and its historical run are not fork measurements. Re-enable only after a separate reviewed allocation."
     },
     {
-      "id": "tenki-hosted-4vcpu",
-      "provider": "tenki",
-      "runsOn": "tenki-standard-medium-4c-8g",
+      "id": "luxor-hosted-4vcpu",
+      "formerIds": ["tenki-hosted-4vcpu"],
+      "provider": "luxor",
+      "runsOn": "luxor-ubuntu-medium-4c-8g",
       "vcpu": 4,
       "memoryGb": 8,
       "image": "ubuntu-24.04",
@@ -83,7 +84,7 @@
         "transparentCache": null,
         "stickyDisk": null
       },
-      "note": "Disabled in the up-lab/benchmark fork. Tenki's prepared label and resources come from its runner documentation, but no fork runner access, publication consent or bounded spend is established here."
+      "note": "Disabled in the up-lab/benchmark fork. Luxor's prepared label and resources come from its runner documentation, but no fork runner access, publication consent or bounded spend is established here."
     }
   ]
 }
