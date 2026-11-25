@@ -100,10 +100,10 @@ test('the Boat routes are declared with their own labels and sizes', () => {
 test('the fork enables exactly GitHub and Ubicloud; other hosted routes remain disabled', () => {
   const routes = readRoutes(join(root, 'routes.json'));
   assert.deepEqual(routes.filter((r) => r.enabled).map((r) => r.id), ['github-hosted-4vcpu', 'ubicloud-hosted-4vcpu']);
-  const tenki = routes.find((r) => r.id === 'tenki-hosted-4vcpu');
-  assert.equal(tenki.runsOn, 'tenki-standard-medium-4c-8g');
-  assert.equal(tenki.vcpu, 4);
-  assert.equal(tenki.memoryGb, 8);
+  const luxor = routes.find((r) => r.id === 'luxor-hosted-4vcpu');
+  assert.equal(luxor.runsOn, 'luxor-ubuntu-medium-4c-8g');
+  assert.equal(luxor.vcpu, 4);
+  assert.equal(luxor.memoryGb, 8);
   for (const route of routes.filter((r) => !r.enabled)) {
     assert.throws(() => selectRoutes(routes, route.id), /disabled/);
   }

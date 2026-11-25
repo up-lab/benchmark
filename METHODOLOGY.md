@@ -163,7 +163,7 @@ A route is one way of getting a runner:
   this fork to prevent accidental cross-organization access or inference. The
   upstream `ci-router/benchmark` Depot and Boat pilots and their historical runs
   are not fork measurements. `depot-ubuntu-4vcpu`, `boat-4vcpu` and
-  `tenki-hosted-4vcpu` also remain disabled. No subscription or plan purchase is
+  `luxor-hosted-4vcpu` also remain disabled. No subscription or plan purchase is
   authorized, and no ruleset bypass is used.
 - **Router routes.** These come later. A router route can only be started from a
   manual or scheduled run on the default branch: the router refuses to place
@@ -346,7 +346,7 @@ cell whose coefficient of variation is above 15% is flagged as unstable.
    not `up-lab/benchmark` measurements.
 2. **Native provider pilot (current fork preparation):** one Ubicloud 4-vCPU
    route is enabled for an explicit one-workload, one-repeat job once external
-   headroom is confirmed under standing owner authorization. Depot, Boat, Tenki and other native routes remain disabled in this
+   headroom is confirmed under standing owner authorization. Depot, Boat, Luxor and other native routes remain disabled in this
    fork. No fork measurement exists yet.
 3. Router routes, once the router's checks for these runs are in place.
 4. The full suite, a schedule and a results page, after each provider's terms
