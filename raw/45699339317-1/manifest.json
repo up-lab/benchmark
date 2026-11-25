@@ -1,0 +1,15 @@
+{
+  "repo": "up-lab/benchmark",
+  "runId": 45699339317,
+  "attempt": 1,
+  "headSha": "dacab9fef502a85feb09d56d96bc331f2eca3d13",
+  "jobs": [
+    {
+      "jobId": 139505111583,
+      "name": "run ubicloud-hosted-4vcpu node-typescript 1",
+      "route": "ubicloud-hosted-4vcpu",
+      "archived": false,
+      "reason": "route-not-enabled"
+    }
+  ]
+}
